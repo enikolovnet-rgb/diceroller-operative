@@ -1,0 +1,61 @@
+# docker compose publishes the service on 5081 (OPERATIVE_PORT); with `dotnet run` use http://localhost:5102.
+# Every /api/v1/rolls request needs an HS256 token signed with Jwt:SigningKey,
+# issuer "diceroller", audience "diceroller", and a user id (Guid) as "sub".
+@baseUrl = http://localhost:5081
+@token = paste-a-dev-token-here
+
+### Roll two dice → 201 + Location
+# @name roll
+POST {{baseUrl}}/api/v1/rolls
+Authorization: Bearer {{token}}
+
+### Get the roll just created → 200
+GET {{baseUrl}}/api/v1/rolls/{{roll.response.body.$.id}}
+Authorization: Bearer {{token}}
+
+### Get a roll that does not exist (or belongs to someone else) → 404
+GET {{baseUrl}}/api/v1/rolls/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+### History, default: newest first, page 1 of 10
+GET {{baseUrl}}/api/v1/rolls
+Authorization: Bearer {{token}}
+
+### Filter by year
+GET {{baseUrl}}/api/v1/rolls?year=2026
+Authorization: Bearer {{token}}
+
+### Filter by year + month
+GET {{baseUrl}}/api/v1/rolls?year=2026&month=10
+Authorization: Bearer {{token}}
+
+### Filter by year + month + day
+GET {{baseUrl}}/api/v1/rolls?year=2026&month=10&day=8
+Authorization: Bearer {{token}}
+
+### Highest sum first (newest first among equal sums)
+GET {{baseUrl}}/api/v1/rolls?sortBySum=desc
+Authorization: Bearer {{token}}
+
+### Oldest first
+GET {{baseUrl}}/api/v1/rolls?sortByDate=asc
+Authorization: Bearer {{token}}
+
+### Both sorts: sum ascending dominates, date descending breaks ties
+GET {{baseUrl}}/api/v1/rolls?sortBySum=asc&sortByDate=desc
+Authorization: Bearer {{token}}
+
+### Page 2 of 5
+GET {{baseUrl}}/api/v1/rolls?page=2&pageSize=5
+Authorization: Bearer {{token}}
+
+### Everything at once
+GET {{baseUrl}}/api/v1/rolls?year=2026&month=10&sortBySum=desc&sortByDate=asc&page=1&pageSize=20
+Authorization: Bearer {{token}}
+
+### Invalid: day without month → 400 with per-field errors
+GET {{baseUrl}}/api/v1/rolls?year=2026&day=8
+Authorization: Bearer {{token}}
+
+### No token → 401
+GET {{baseUrl}}/api/v1/rolls
