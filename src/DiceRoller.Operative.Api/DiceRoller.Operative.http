@@ -1,6 +1,7 @@
+# docker compose publishes the service on 5081 (OPERATIVE_PORT); with `dotnet run` use http://localhost:5102.
 # Every /api/v1/rolls request needs an HS256 token signed with Jwt:SigningKey,
 # issuer "diceroller", audience "diceroller", and a user id (Guid) as "sub".
-@baseUrl = http://localhost:5102
+@baseUrl = http://localhost:5081
 @token = paste-a-dev-token-here
 
 ### Roll two dice → 201 + Location

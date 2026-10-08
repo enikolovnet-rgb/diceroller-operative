@@ -1,0 +1,41 @@
+name: diceroller-operative
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}
+    volumes:
+      - operative-sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  operative:
+    build:
+      context: .
+      secrets:
+        - nuget_token
+    image: diceroller-operative:local
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ConnectionStrings__Operative: "Server=sqlserver;Database=Operative;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      Jwt__Issuer: ${JWT_ISSUER:-diceroller}
+      Jwt__Audience: ${JWT_AUDIENCE:-diceroller}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env (the same key UserAccess signs with)}
+    ports:
+      - "${OPERATIVE_PORT:-5081}:8080"
+
+secrets:
+  nuget_token:
+    environment: NUGET_AUTH_TOKEN
+
+volumes:
+  operative-sqlserver-data:

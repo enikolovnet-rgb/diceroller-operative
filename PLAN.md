@@ -87,14 +87,14 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 
 ## 7. Container and CI
 
-- [ ] Multi-stage `Dockerfile`, non-root user, `HEALTHCHECK` on `/health/live`
-- [ ] `docker-compose.yml`: this service + its own SQL Server 2022 (healthcheck, named volume); settings from `.env`
-- [ ] `.env.example`; `.env` git-ignored
-- [ ] GitHub Actions `ci.yml`: restore → build → unit + integration tests → on `main`, push image `ghcr.io/<owner>/diceroller-operative` tagged with SHA and version
-- [ ] `README.md`: purpose, run locally, configuration, endpoints and query parameters, the token contract it expects, how to get a dev token (`dotnet user-jwts`)
+- [x] Multi-stage `Dockerfile`, non-root user, `HEALTHCHECK` on `/health/live`
+- [x] `docker-compose.yml`: this service + its own SQL Server 2022 (healthcheck, named volume); settings from `.env`
+- [x] `.env.example`; `.env` git-ignored
+- [x] GitHub Actions `ci.yml`: restore → build → unit + integration tests → on `main`, push image `ghcr.io/<owner>/diceroller-operative` tagged with SHA and version
+- [x] `README.md`: purpose, run locally, configuration, endpoints and query parameters, the token contract it expects, how to get a dev token (`dotnet user-jwts`)
 
 ## Done when
 
-- [ ] `dotnet build` with 0 warnings, `dotnet test` green
-- [ ] `docker compose up` from a fresh clone of this repo alone works, and every request in the `.http` file succeeds with a dev token
+- [x] `dotnet build` with 0 warnings, `dotnet test` green
+- [x] `docker compose up` from a fresh clone of this repo alone works, and every request in the `.http` file succeeds with a dev token
 - [x] Every error response (400, 401, 404, 500) has the standard body with `errorCode` and `traceId`
