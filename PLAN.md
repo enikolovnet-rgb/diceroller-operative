@@ -28,22 +28,22 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 
 ## 3. Application
 
-- [ ] Interfaces: `IDiceRollRepository`, `ICurrentUser`
-- [ ] `RollDiceHandler` → `Result<DiceRollDto>`
-- [ ] `GetRollHandler` → `Result<DiceRollDto>`; `NotFound` when missing **or** owned by another user
-- [ ] `RollsQuery` record: `Year?`, `Month?`, `Day?`, `SortBySum?`, `SortByDate?` (`SortDirection` enum `Asc`/`Desc`), `Page`, `PageSize`
-- [ ] `RollsQueryValidator`:
+- [x] Interfaces: `IDiceRollRepository`, `ICurrentUser`
+- [x] `RollDiceHandler` → `Result<DiceRollDto>`
+- [x] `GetRollHandler` → `Result<DiceRollDto>`; `NotFound` when missing **or** owned by another user
+- [x] `RollsQuery` record: `Year?`, `Month?`, `Day?`, `SortBySum?`, `SortByDate?` (`SortDirection` enum `Asc`/`Desc`), `Page`, `PageSize`
+- [x] `RollsQueryValidator`:
   - `Year` 1–9999; `Month` 1–12 and requires `Year`; `Day` 1–31 and requires `Year` + `Month`
   - `Year/Month/Day` must form a real date (no 30 February)
   - `Page` ≥ 1; `PageSize` 1–100 (reuse `PagedQueryValidator` rules)
   - every rule has `.WithErrorCode(...)` and `.WithMessage(...)`
-- [ ] `RollsQueryBuilder` (pure LINQ over `IQueryable<DiceRoll>`):
+- [x] `RollsQueryBuilder` (pure LINQ over `IQueryable<DiceRoll>`):
   - filter: convert year / year-month / year-month-day into a half-open UTC range `[start, end)`; filter `RolledAtUtc >= start && RolledAtUtc < end`
   - sort: `SortBySum` present → order by `Sum` first, then `RolledAtUtc` (direction from `SortByDate`, default desc); only `SortByDate` → by `RolledAtUtc`; neither → `RolledAtUtc desc`; always `ThenBy(Id)` last
   - page: count total, then skip / take
-- [ ] `GetRollsHandler` → `Result<PagedResponse<DiceRollDto>>`, always scoped to `ICurrentUser.UserId`
-- [ ] `DiceRollDto { Id, Die1, Die2, Sum, RolledAtUtc }`
-- [ ] `AddApplication()` registration extension
+- [x] `GetRollsHandler` → `Result<PagedResponse<DiceRollDto>>`, always scoped to `ICurrentUser.UserId`
+- [x] `DiceRollDto { Id, Die1, Die2, Sum, RolledAtUtc }`
+- [x] `AddApplication()` registration extension
 
 ## 4. Infrastructure
 
@@ -71,8 +71,8 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 ## 6. Tests
 
 - [x] Unit: `DieValue` (0 and 7 throw), `DiceRoll.Create` with a fake roller and `FakeTimeProvider`
-- [ ] Unit: `RollsQueryValidator` — month without year, day without month, 30 Feb, page 0, pageSize 101
-- [ ] Unit: `RollsQueryBuilder` over an in-memory list:
+- [x] Unit: `RollsQueryValidator` — month without year, day without month, 30 Feb, page 0, pageSize 101
+- [x] Unit: `RollsQueryBuilder` over an in-memory list:
   - year / month / day ranges include boundaries correctly (start inclusive, end exclusive)
   - both sorts: sum dominates, date breaks ties; each direction combination
   - default order; stable paging with equal sums and timestamps
