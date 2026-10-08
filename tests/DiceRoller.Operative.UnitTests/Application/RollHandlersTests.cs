@@ -30,7 +30,7 @@ public sealed class RollHandlersTests
             .Returns(Task.CompletedTask);
         var handler = new RollDiceHandler(_repository.Object, _currentUser.Object, new FakeDiceRoller(2, 5), new FakeTimeProvider(Now));
 
-        var result = await handler.Handle(TestContext.Current.CancellationToken);
+        var result = await handler.Handle(new RollDiceCommand(), TestContext.Current.CancellationToken);
 
         result.IsSuccess.ShouldBeTrue();
         saved.ShouldNotBeNull();
@@ -44,7 +44,7 @@ public sealed class RollHandlersTests
         var id = Guid.CreateVersion7();
         var handler = new GetRollHandler(_repository.Object, _currentUser.Object);
 
-        var result = await handler.Handle(id, TestContext.Current.CancellationToken);
+        var result = await handler.Handle(new GetRollQuery(id), TestContext.Current.CancellationToken);
 
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe(DiceRollErrors.NotFound.Code);
@@ -60,7 +60,7 @@ public sealed class RollHandlersTests
             .ReturnsAsync(dto);
         var handler = new GetRollHandler(_repository.Object, _currentUser.Object);
 
-        var result = await handler.Handle(dto.Id, TestContext.Current.CancellationToken);
+        var result = await handler.Handle(new GetRollQuery(dto.Id), TestContext.Current.CancellationToken);
 
         result.Value.ShouldBe(dto);
     }

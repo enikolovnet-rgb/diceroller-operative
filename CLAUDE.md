@@ -50,7 +50,7 @@ dotnet user-jwts create --project src/DiceRoller.Operative.Api   # dev token for
 
 - Projects: `Api → Application → Domain`; `Infrastructure → Application`. Domain references nothing except `DiceRoller.BuildingBlocks.Domain`.
 - Domain: entities with private setters and factory methods (`DiceRoll.Create(...)`); invariants guarded inside the domain; value objects for concepts like `DieValue`.
-- Application: one handler class per use case (no MediatR); handlers depend on interfaces, never on EF or ASP.NET types.
+- Application: one MediatR (12.x, Apache-2.0 — never 13+, which is commercially licensed) request + `IRequestHandler` per use case; controllers call `ISender.Send`. No pipeline behaviors — validation stays in `ValidationFilter`. Handlers depend on interfaces, never on EF or ASP.NET types.
 - Api: thin controllers — bind → (validation filter runs) → call one handler → map `Result` to HTTP. No business logic, no `DbContext`.
 - Infrastructure: EF Core and other external concerns — all behind interfaces declared in Application.
 - Inject `TimeProvider` for time and interfaces for randomness. Never call `DateTime.UtcNow` or `Random` directly.

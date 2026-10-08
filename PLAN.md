@@ -11,7 +11,7 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 - [x] `DiceRoller.Operative.slnx`, `global.json`, `Directory.Build.props`, `Directory.Packages.props` (BuildingBlocks pinned to `0.1.0`), `nuget.config`, `.editorconfig`, `.gitignore`
 - [x] Projects:
   - `src/DiceRoller.Operative.Domain` → BuildingBlocks.Domain
-  - `src/DiceRoller.Operative.Application` → Domain, BuildingBlocks.Contracts, FluentValidation
+  - `src/DiceRoller.Operative.Application` → Domain, BuildingBlocks.Contracts, FluentValidation, MediatR 12.5.0
   - `src/DiceRoller.Operative.Infrastructure` → Application, EF Core SqlServer
   - `src/DiceRoller.Operative.Api` → Application, Infrastructure, BuildingBlocks.Web
   - `tests/DiceRoller.Operative.UnitTests`
@@ -29,8 +29,8 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 ## 3. Application
 
 - [x] Interfaces: `IDiceRollRepository`, `ICurrentUser`
-- [x] `RollDiceHandler` → `Result<DiceRollDto>`
-- [x] `GetRollHandler` → `Result<DiceRollDto>`; `NotFound` when missing **or** owned by another user
+- [x] `RollDiceCommand` / `RollDiceHandler` → `Result<DiceRollDto>`
+- [x] `GetRollQuery` / `GetRollHandler` → `Result<DiceRollDto>`; `NotFound` when missing **or** owned by another user
 - [x] `RollsQuery` record: `Year?`, `Month?`, `Day?`, `SortBySum?`, `SortByDate?` (`SortDirection` enum `Asc`/`Desc`), `Page`, `PageSize`
 - [x] `RollsQueryValidator`:
   - `Year` 1–9999; `Month` 1–12 and requires `Year`; `Day` 1–31 and requires `Year` + `Month`
@@ -41,32 +41,32 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
   - filter: convert year / year-month / year-month-day into a half-open UTC range `[start, end)`; filter `RolledAtUtc >= start && RolledAtUtc < end`
   - sort: `SortBySum` present → order by `Sum` first, then `RolledAtUtc` (direction from `SortByDate`, default desc); only `SortByDate` → by `RolledAtUtc`; neither → `RolledAtUtc desc`; always `ThenBy(Id)` last
   - page: count total, then skip / take
-- [x] `GetRollsHandler` → `Result<PagedResponse<DiceRollDto>>`, always scoped to `ICurrentUser.UserId`
+- [x] `RollsQuery` / `GetRollsHandler` → `Result<PagedResponse<DiceRollDto>>`, always scoped to `ICurrentUser.UserId`
 - [x] `DiceRollDto { Id, Die1, Die2, Sum, RolledAtUtc }`
 - [x] `AddApplication()` registration extension
 
 ## 4. Infrastructure
 
-- [ ] `OperativeDbContext`, `DiceRollConfiguration`:
+- [x] `OperativeDbContext`, `DiceRollConfiguration`:
   - table `DiceRolls`; `Die1`, `Die2` as `tinyint` with check constraints 1–6
   - `Sum` as persisted computed column `Die1 + Die2`
   - indexes `(UserId, RolledAtUtc)` and `(UserId, Sum, RolledAtUtc)`
-- [ ] Initial migration `InitialCreate`
-- [ ] `DiceRollRepository` (queries use `AsNoTracking()` and project to DTOs)
-- [ ] `CryptoDiceRoller : IDiceRoller` using `RandomNumberGenerator.GetInt32(1, 7)`
-- [ ] `AddInfrastructure(IConfiguration)`; DB health check
+- [x] Initial migration `InitialCreate`
+- [x] `DiceRollRepository` (queries use `AsNoTracking()` and project to DTOs)
+- [x] `CryptoDiceRoller : IDiceRoller` using `RandomNumberGenerator.GetInt32(1, 7)`
+- [x] `AddInfrastructure(IConfiguration)`; DB health check
 
 ## 5. Api
 
-- [ ] `Program.cs`: `AddServiceDefaults()`, `AddApplication()`, `AddInfrastructure()`, `AddJwtAuthentication()`; fallback policy = authenticated; migrations at startup in Development and in the container
-- [ ] `ICurrentUser` implementation: reads `sub`, parses Guid; never takes a user id from the request
-- [ ] `RollsController` (all endpoints require auth):
+- [x] `Program.cs`: `AddServiceDefaults()`, `AddApplication()`, `AddInfrastructure()`, `AddJwtAuthentication()`; fallback policy = authenticated; migrations at startup in Development and in the container
+- [x] `ICurrentUser` implementation: reads `sub`, parses Guid; never takes a user id from the request
+- [x] `RollsController` (all endpoints require auth):
   - `POST /api/v1/rolls` → `201` + `Location`
   - `GET /api/v1/rolls/{id:guid}` → `200` / `404`
   - `GET /api/v1/rolls?year=&month=&day=&sortBySum=&sortByDate=&page=&pageSize=` → `200 PagedResponse<DiceRollDto>`
-- [ ] `/health/*` and OpenAPI explicitly `[AllowAnonymous]`
-- [ ] `appsettings.json` with JWT issuer/audience matching the token contract; key via user-secrets / env
-- [ ] `DiceRoller.Operative.http` with roll, get-by-id and several list queries (filters, both sorts, page 2)
+- [x] `/health/*` and OpenAPI explicitly `[AllowAnonymous]`
+- [x] `appsettings.json` with JWT issuer/audience matching the token contract; key via user-secrets / env
+- [x] `DiceRoller.Operative.http` with roll, get-by-id and several list queries (filters, both sorts, page 2)
 
 ## 6. Tests
 

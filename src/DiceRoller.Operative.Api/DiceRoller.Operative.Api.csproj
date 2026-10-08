@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="DiceRoller.BuildingBlocks.Web" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

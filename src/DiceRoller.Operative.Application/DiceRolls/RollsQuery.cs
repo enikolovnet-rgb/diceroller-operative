@@ -1,4 +1,6 @@
 using DiceRoller.BuildingBlocks.Contracts;
+using DiceRoller.BuildingBlocks.Domain;
+using MediatR;
 
 namespace DiceRoller.Operative.Application.DiceRolls;
 
@@ -6,7 +8,7 @@ namespace DiceRoller.Operative.Application.DiceRolls;
 /// Filters, sorting and paging for the caller's roll history. Deliberately has no user id:
 /// the owner always comes from <see cref="Abstractions.ICurrentUser"/>.
 /// </summary>
-public sealed record RollsQuery
+public sealed record RollsQuery : IRequest<Result<PagedResponse<DiceRollDto>>>
 {
     public int? Year { get; init; }
 

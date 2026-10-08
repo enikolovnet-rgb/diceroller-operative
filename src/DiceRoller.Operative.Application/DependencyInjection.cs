@@ -11,9 +11,7 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssemblyContaining<RollsQueryValidator>();
 
-        services.AddScoped<RollDiceHandler>();
-        services.AddScoped<GetRollHandler>();
-        services.AddScoped<GetRollsHandler>();
+        services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<RollDiceHandler>());
 
         services.TryAddSingleton(TimeProvider.System);
 
