@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="DiceRoller.BuildingBlocks.Contracts" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiceRoller.Operative.Domain\DiceRoller.Operative.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

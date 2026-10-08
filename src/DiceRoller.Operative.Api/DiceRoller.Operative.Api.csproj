@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>diceroller-operative-api</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiceRoller.BuildingBlocks.Web" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiceRoller.Operative.Application\DiceRoller.Operative.Application.csproj" />
+    <ProjectReference Include="..\DiceRoller.Operative.Infrastructure\DiceRoller.Operative.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

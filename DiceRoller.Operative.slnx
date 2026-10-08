@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DiceRoller.Operative.Domain/DiceRoller.Operative.Domain.csproj" />
+    <Project Path="src/DiceRoller.Operative.Application/DiceRoller.Operative.Application.csproj" />
+    <Project Path="src/DiceRoller.Operative.Infrastructure/DiceRoller.Operative.Infrastructure.csproj" />
+    <Project Path="src/DiceRoller.Operative.Api/DiceRoller.Operative.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DiceRoller.Operative.UnitTests/DiceRoller.Operative.UnitTests.csproj" />
+    <Project Path="tests/DiceRoller.Operative.IntegrationTests/DiceRoller.Operative.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>
