@@ -77,7 +77,7 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
   - both sorts: sum dominates, date breaks ties; each direction combination
   - default order; stable paging with equal sums and timestamps
   - `TotalCount` / `TotalPages`
-- [ ] Integration (Testcontainers SQL Server + `WebApplicationFactory`, tokens minted with the test key):
+- [x] Integration (Testcontainers SQL Server + `WebApplicationFactory`, tokens minted with the test key):
   - no token / expired / wrong signature / wrong issuer / wrong audience → 401, standard body
   - roll → 201, dice 1–6, sum correct
   - list returns only the caller's rolls (two users)
@@ -97,4 +97,4 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 
 - [ ] `dotnet build` with 0 warnings, `dotnet test` green
 - [ ] `docker compose up` from a fresh clone of this repo alone works, and every request in the `.http` file succeeds with a dev token
-- [ ] Every error response (400, 401, 404, 500) has the standard body with `errorCode` and `traceId`
+- [x] Every error response (400, 401, 404, 500) has the standard body with `errorCode` and `traceId`
