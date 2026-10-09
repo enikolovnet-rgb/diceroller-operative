@@ -13,6 +13,7 @@ public sealed class RollHandlersTests
     private static readonly DateTimeOffset Now = new(2026, 10, 8, 12, 0, 0, TimeSpan.Zero);
 
     private readonly Mock<IDiceRollRepository> _repository = new();
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<ICurrentUser> _currentUser = new();
 
     public RollHandlersTests()
@@ -24,18 +25,36 @@ public sealed class RollHandlersTests
     public async Task RollDice_ValidUser_PersistsRollForCurrentUserAndReturnsDto()
     {
         DiceRoll? saved = null;
+        var stagedBeforeCommit = false;
         _repository
-            .Setup(repository => repository.AddAsync(It.IsAny<DiceRoll>(), It.IsAny<CancellationToken>()))
-            .Callback<DiceRoll, CancellationToken>((roll, _) => saved = roll)
+            .Setup(repository => repository.Add(It.IsAny<DiceRoll>()))
+            .Callback<DiceRoll>(roll => saved = roll);
+        _unitOfWork
+            .Setup(unitOfWork => unitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Callback(() => stagedBeforeCommit = saved is not null)
             .Returns(Task.CompletedTask);
-        var handler = new RollDiceHandler(_repository.Object, _currentUser.Object, new FakeDiceRoller(2, 5), new FakeTimeProvider(Now));
+        var handler = CreateRollDiceHandler();
 
         var result = await handler.Handle(new RollDiceCommand(), TestContext.Current.CancellationToken);
 
         result.IsSuccess.ShouldBeTrue();
+        stagedBeforeCommit.ShouldBeTrue();
+        _unitOfWork.Verify(unitOfWork => unitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         saved.ShouldNotBeNull();
         saved.UserId.ShouldBe(TestRolls.UserId);
         result.Value.ShouldBe(new DiceRollDto(saved.Id, 2, 5, 7, Now.UtcDateTime));
+    }
+
+    [Fact]
+    public async Task RollDice_CommitFails_ExceptionPropagates()
+    {
+        _unitOfWork
+            .Setup(unitOfWork => unitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("commit failed"));
+        var handler = CreateRollDiceHandler();
+
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => handler.Handle(new RollDiceCommand(), TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -82,4 +101,7 @@ public sealed class RollHandlersTests
             repository => repository.GetPageAsync(It.Is<Guid>(id => id != TestRolls.UserId), It.IsAny<RollsQuery>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
+
+    private RollDiceHandler CreateRollDiceHandler() =>
+        new(_repository.Object, _unitOfWork.Object, _currentUser.Object, new FakeDiceRoller(2, 5), new FakeTimeProvider(Now));
 }

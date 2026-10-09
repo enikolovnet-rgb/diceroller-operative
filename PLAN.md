@@ -29,6 +29,7 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
 ## 3. Application
 
 - [x] Interfaces: `IDiceRollRepository`, `ICurrentUser`
+- [x] `IUnitOfWork`: handlers commit; the repository only stages (`Add`)
 - [x] `RollDiceCommand` / `RollDiceHandler` → `Result<DiceRollDto>`
 - [x] `GetRollQuery` / `GetRollHandler` → `Result<DiceRollDto>`; `NotFound` when missing **or** owned by another user
 - [x] `RollsQuery` record: `Year?`, `Month?`, `Day?`, `SortBySum?`, `SortByDate?` (`SortDirection` enum `Asc`/`Desc`), `Page`, `PageSize`
@@ -51,6 +52,7 @@ Depends on `DiceRoller.BuildingBlocks.*` v0.1.0. No dependency on `diceroller-us
   - table `DiceRolls`; `Die1`, `Die2` as `tinyint` with check constraints 1–6
   - `Sum` as persisted computed column `Die1 + Die2`
   - indexes `(UserId, RolledAtUtc)` and `(UserId, Sum, RolledAtUtc)`
+- [x] `OperativeDbContext` implements `IUnitOfWork` (registered as the scoped context)
 - [x] Initial migration `InitialCreate`
 - [x] `DiceRollRepository` (queries use `AsNoTracking()` and project to DTOs)
 - [x] `CryptoDiceRoller : IDiceRoller` using `RandomNumberGenerator.GetInt32(1, 7)`

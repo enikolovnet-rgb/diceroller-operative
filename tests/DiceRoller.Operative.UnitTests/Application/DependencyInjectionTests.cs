@@ -41,6 +41,7 @@ public sealed class DependencyInjectionTests
         var services = new ServiceCollection();
         services.AddApplication();
         services.AddSingleton(_repository.Object);
+        services.AddSingleton(new Mock<IUnitOfWork>().Object);
         services.AddSingleton(currentUser.Object);
         services.AddSingleton<IDiceRoller>(new FakeDiceRoller(1, 6));
 

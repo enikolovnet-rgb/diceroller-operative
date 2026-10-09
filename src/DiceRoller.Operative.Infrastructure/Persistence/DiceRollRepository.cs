@@ -12,11 +12,7 @@ internal sealed class DiceRollRepository(OperativeDbContext db) : IDiceRollRepos
     private static readonly Expression<Func<DiceRoll, DiceRollDto>> ToDto =
         roll => new DiceRollDto(roll.Id, roll.Die1.Value, roll.Die2.Value, roll.Sum, roll.RolledAtUtc);
 
-    public async Task AddAsync(DiceRoll roll, CancellationToken cancellationToken)
-    {
-        db.DiceRolls.Add(roll);
-        await db.SaveChangesAsync(cancellationToken);
-    }
+    public void Add(DiceRoll roll) => db.DiceRolls.Add(roll);
 
     public Task<DiceRollDto?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken) =>
         db.DiceRolls

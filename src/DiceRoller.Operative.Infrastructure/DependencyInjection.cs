@@ -31,6 +31,7 @@ public static class DependencyInjection
                 provider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString,
                 sql => sql.EnableRetryOnFailure()));
 
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<OperativeDbContext>());
         services.AddScoped<IDiceRollRepository, DiceRollRepository>();
         services.AddSingleton<IDiceRoller, CryptoDiceRoller>();
 

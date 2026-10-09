@@ -32,7 +32,7 @@ public sealed class UnexpectedErrorTests(OperativeApiFactory factory)
 
     private sealed class ThrowingRepository : IDiceRollRepository
     {
-        public Task AddAsync(DiceRoll roll, CancellationToken cancellationToken) =>
+        public void Add(DiceRoll roll) =>
             throw new InvalidOperationException(FailureMessage);
 
         public Task<DiceRollDto?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken) =>

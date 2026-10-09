@@ -7,6 +7,7 @@ namespace DiceRoller.Operative.Application.DiceRolls;
 
 public sealed class RollDiceHandler(
     IDiceRollRepository rolls,
+    IUnitOfWork unitOfWork,
     ICurrentUser currentUser,
     IDiceRoller diceRoller,
     TimeProvider timeProvider) : IRequestHandler<RollDiceCommand, Result<DiceRollDto>>
@@ -15,7 +16,8 @@ public sealed class RollDiceHandler(
     {
         var roll = DiceRoll.Create(currentUser.UserId, diceRoller, timeProvider);
 
-        await rolls.AddAsync(roll, cancellationToken);
+        rolls.Add(roll);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return roll.ToDto();
     }

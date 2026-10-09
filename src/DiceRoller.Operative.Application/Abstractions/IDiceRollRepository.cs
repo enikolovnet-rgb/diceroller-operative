@@ -6,8 +6,8 @@ namespace DiceRoller.Operative.Application.Abstractions;
 
 public interface IDiceRollRepository
 {
-    /// <summary>Persists a new roll.</summary>
-    Task AddAsync(DiceRoll roll, CancellationToken cancellationToken);
+    /// <summary>Stages a new roll; <see cref="IUnitOfWork"/> commits it.</summary>
+    void Add(DiceRoll roll);
 
     /// <summary>The roll, or <see langword="null"/> when it does not exist or belongs to another user.</summary>
     Task<DiceRollDto?> GetByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken);
